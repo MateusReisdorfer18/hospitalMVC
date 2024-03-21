@@ -13,13 +13,13 @@ public class MedicoController {
     public List<Medico> listarTodos() {
         try {
             GenericDAO dao = new MedicoDAOimpl();
-            List<Medico> listaMedicos = new ArrayList<Medico>();
+            List<Medico> medicos = new ArrayList<Medico>();
 
             for(Object objeto:dao.listarTodos()) {
-                listaMedicos.add((Medico) objeto);
+                medicos.add((Medico) objeto);
             }
 
-            return listaMedicos;
+            return medicos;
         } catch(Exception e) {
             System.out.println("Problemas no controller ao listar todos os medicos");
             e.printStackTrace();
