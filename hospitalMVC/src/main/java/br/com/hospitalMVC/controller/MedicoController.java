@@ -54,7 +54,7 @@ public class MedicoController {
     public boolean editar(Medico medico) {
         try {
             GenericDAO dao = new MedicoDAOimpl();
-            dao.cadastrar(medico);
+            dao.editar(medico);
             return true;
         } catch (Exception e) {
             System.out.println("Problemas no controller ao cadastrar medico");

@@ -13,8 +13,7 @@ public class Medico {
     public Medico() {
     }
 
-    public Medico (Integer id, String nome, String especialidade, String crm, Boolean isPlantao) {
-        this.id = id;
+    public Medico (String nome, String especialidade, String crm, Boolean isPlantao) {
         this.nome = nome;
         this.especialidade = especialidade;
         this.crm = crm;
