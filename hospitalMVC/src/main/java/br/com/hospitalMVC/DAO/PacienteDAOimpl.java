@@ -97,16 +97,85 @@ public class PacienteDAOimpl implements GenericDAO{
 
     @Override
     public boolean cadastrar(Object objeto) {
-        return false;
+        Paciente paciente = null;
+        PreparedStatement stmt = null;
+        String query = "INSERT INTO paciente (nome, cpf, isInternado, idade, medico) VALUES (?, ?, ?, ?, ?)";
+
+        try {
+            stmt = this.conn.prepareStatement(query);
+            paciente = (Paciente) objeto;
+            stmt.setString(1, paciente.getNome());
+            stmt.setString(2, paciente.getCpf());
+            stmt.setBoolean(3, paciente.getInternado());
+            stmt.setInt(4, paciente.getIdade());
+            //adicionar o medico
+            stmt.execute();
+        } catch (SQLException e) {
+            System.out.println("Problemas na DAO ao cadastrar paciente");
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                ConnectionFactory.closeConnection(this.conn, stmt);
+            } catch (Exception e) {
+                System.out.println("Problemas na DAO ao fechar conexao com o banco");
+                e.printStackTrace();
+            }
+        }
+
+        return true;
     }
 
     @Override
     public boolean editar(Object objeto) {
-        return false;
+        Paciente paciente = null;
+        PreparedStatement stmt = null;
+        String query = "UPDATE paciente SET nome=?, cpf=?, isInternado=?, idade=?, medico=? WHERE id=?";
+
+        try {
+            stmt = this.conn.prepareStatement(query);
+            paciente = (Paciente) objeto;
+            stmt.setString(1, paciente.getNome());
+            stmt.setString(2, paciente.getCpf());
+            stmt.setBoolean(3, paciente.getInternado());
+            stmt.setInt(4, paciente.getIdade());
+            //adicionar o medico
+            stmt.execute();
+        } catch (SQLException e) {
+            System.out.println("Problemas na DAO ao editar paciente");
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+               ConnectionFactory.closeConnection(this.conn, stmt);
+            } catch (Exception e) {
+                System.out.println("Problemas na DAO ao fechar conexao com o banco");
+                e.printStackTrace();
+            }
+        }
+
+        return true;
     }
 
     @Override
     public void excluir(Integer id) {
+        PreparedStatement stmt = null;
+        String query = "DELETE FROM paciente WHERE id=?";
 
+        try {
+            stmt = this.conn.prepareStatement(query);
+            stmt.setInt(1, id);
+            stmt.execute();
+        } catch (SQLException e) {
+            System.out.println("Problemas na DAO ao excluir paciente");
+            e.printStackTrace();
+        } finally {
+            try {
+                ConnectionFactory.closeConnection(this.conn, stmt);
+            } catch (Exception e) {
+                System.out.println("Problemas na DAO ao fechar conexao com o banco");
+                e.printStackTrace();
+            }
+        }
     }
 }
