@@ -1,5 +1,6 @@
 package br.com.hospitalMVC.DAO;
 
+import br.com.hospitalMVC.controller.MedicoController;
 import br.com.hospitalMVC.model.Medico;
 import br.com.hospitalMVC.model.Paciente;
 import br.com.hospitalMVC.util.ConnectionFactory;
@@ -14,7 +15,7 @@ import java.util.List;
 
 public class PacienteDAOimpl implements GenericDAO{
     private Connection conn;
-    private MedicoDAOimpl medicoDAO = new MedicoDAOimpl();
+    private MedicoController medicoController = new MedicoController();
 
     public PacienteDAOimpl() throws Exception {
         try {
@@ -42,7 +43,7 @@ public class PacienteDAOimpl implements GenericDAO{
                 paciente.setIdade(rs.getInt("idade"));
                 paciente.setCpf(rs.getString("cpf"));
                 paciente.setInternado(rs.getBoolean("isInternado"));
-                Medico medico = (Medico) medicoDAO.buscarPorId(rs.getInt("medico"));
+                Medico medico = medicoController.buscarPorId(rs.getInt("medico"));
                 paciente.setMedico(medico);
                 lista.add(paciente);
             }
@@ -81,7 +82,7 @@ public class PacienteDAOimpl implements GenericDAO{
                 paciente.setIdade(rs.getInt("idade"));
                 paciente.setCpf(rs.getString("cpf"));
                 paciente.setInternado(rs.getBoolean("isInternado"));
-                Medico medico = (Medico) medicoDAO.buscarPorId(rs.getInt("medico"));
+                Medico medico = medicoController.buscarPorId(rs.getInt("medico"));
                 paciente.setMedico(medico);
             }
         } catch (SQLException e) {
@@ -101,7 +102,7 @@ public class PacienteDAOimpl implements GenericDAO{
 
     @Override
     public boolean cadastrar(Object objeto) {
-        Paciente paciente = null;
+        Paciente paciente;
         PreparedStatement stmt = null;
         String query = "INSERT INTO paciente (nome, cpf, isInternado, idade, medico) VALUES (?, ?, ?, ?, ?)";
 
@@ -112,8 +113,7 @@ public class PacienteDAOimpl implements GenericDAO{
             stmt.setString(2, paciente.getCpf());
             stmt.setBoolean(3, paciente.getInternado());
             stmt.setInt(4, paciente.getIdade());
-            Medico medico = paciente.getMedico();
-            stmt.setInt(5, medico.getId());
+            stmt.setInt(5, paciente.getMedico().getId());
             stmt.execute();
         } catch (SQLException e) {
             System.out.println("Problemas na DAO ao cadastrar paciente");
@@ -144,7 +144,8 @@ public class PacienteDAOimpl implements GenericDAO{
             stmt.setString(2, paciente.getCpf());
             stmt.setBoolean(3, paciente.getInternado());
             stmt.setInt(4, paciente.getIdade());
-            //adicionar o medico
+            stmt.setInt(5, paciente.getMedico().getId());
+            stmt.setInt(6, paciente.getId());
             stmt.execute();
         } catch (SQLException e) {
             System.out.println("Problemas na DAO ao editar paciente");
