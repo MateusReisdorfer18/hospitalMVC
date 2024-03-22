@@ -1,5 +1,6 @@
 package br.com.hospitalMVC.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Medico {
@@ -11,6 +12,7 @@ public class Medico {
     private List<Paciente> pacientes;
 
     public Medico() {
+        this.pacientes = new ArrayList<>();
     }
 
     public Medico (String nome, String especialidade, String crm, Boolean isPlantao) {
@@ -18,6 +20,7 @@ public class Medico {
         this.especialidade = especialidade;
         this.crm = crm;
         this.isPlantao = isPlantao;
+        this.pacientes = new ArrayList<>();
     }
 
     public Integer getId() {
@@ -66,5 +69,13 @@ public class Medico {
 
     public void setPacientes(List<Paciente> pacientes) {
         this.pacientes = pacientes;
+    }
+
+    public void adicionarPaciente(Paciente paciente) {
+        this.pacientes.add(paciente);
+    }
+
+    public void removerPaciente(Paciente paciente) {
+        this.pacientes.remove(paciente);
     }
 }

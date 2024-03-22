@@ -1,6 +1,7 @@
 package br.com.hospitalMVC.DAO;
 
 import br.com.hospitalMVC.model.Medico;
+import br.com.hospitalMVC.model.Paciente;
 import br.com.hospitalMVC.util.ConnectionFactory;
 
 import java.sql.Connection;
@@ -58,6 +59,42 @@ public class MedicoDAOimpl implements GenericDAO{
         return lista;
     }
 
+    public List<Paciente> listarPacientes(Integer id) {
+        List<Paciente> lista = new ArrayList<>();
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        String query = "SELECT * FROM paciente p WHERE medico = ?";
+
+        try {
+            stmt = this.conn.prepareStatement(query);
+            stmt.setInt(1, id);
+            rs = stmt.executeQuery();
+
+            while(rs.next()) {
+                Paciente paciente = new Paciente();
+                paciente.setId(rs.getInt("id"));
+                paciente.setNome(rs.getString("nome"));
+                paciente.setIdade(rs.getInt("idade"));
+                paciente.setCpf(rs.getString("cpf"));
+                paciente.setInternado(rs.getBoolean("isInternado"));
+
+                lista.add(paciente);
+            }
+        } catch(SQLException e) {
+            System.out.println("Problemas na DAO ao listar pacientes");
+            e.printStackTrace();
+        } finally {
+            try {
+                ConnectionFactory.closeConnection(this.conn, stmt, rs);
+            } catch (Exception e) {
+                System.out.println("Problemas na DAO ao fechar conexao com o banco");
+                e.printStackTrace();
+            }
+        }
+
+        return lista;
+    }
+
     @Override
     public Object buscarPorId(Integer id) {
         Medico medico = null;
@@ -70,7 +107,7 @@ public class MedicoDAOimpl implements GenericDAO{
             stmt.setInt(1, id);
             rs = stmt.executeQuery();
 
-            while(rs.next()) {
+            if (rs.next()) {
                 medico = new Medico();
                 medico.setId(rs.getInt("id"));
                 medico.setNome(rs.getString("nome"));
@@ -109,6 +146,31 @@ public class MedicoDAOimpl implements GenericDAO{
             stmt.execute();
         } catch (SQLException e) {
             System.out.println("Problemas na DAO ao cadastrar medico");
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                ConnectionFactory.closeConnection(this.conn, stmt);
+            } catch (Exception e) {
+                System.out.println("Problemas na DAO ao fechar conexao com o banco");
+                e.printStackTrace();
+            }
+        }
+
+        return true;
+    }
+
+    public boolean vincularPaciente(Paciente paciente, Integer idMedico) {
+        PreparedStatement stmt = null;
+        String query = "UPDATE paciente SET medico = ? WHERE id = ?";
+
+        try {
+            stmt = this.conn.prepareStatement(query);
+            stmt.setInt(1, idMedico);
+            stmt.setInt(2, paciente.getId());
+            stmt.execute();
+        } catch (SQLException e) {
+            System.out.println("Problemas na DAO ao vincular paciente");
             e.printStackTrace();
             return false;
         } finally {
@@ -174,5 +236,29 @@ public class MedicoDAOimpl implements GenericDAO{
                 e.printStackTrace();
             }
         }
+    }
+
+    public boolean desvincularPaciente(Paciente paciente) {
+        PreparedStatement stmt = null;
+        String query = "UPDATE paciente SET medico = null WHERE id = ?";
+
+        try {
+            stmt = this.conn.prepareStatement(query);
+            stmt.setInt(1, paciente.getId());
+            stmt.execute();
+        } catch (SQLException e) {
+            System.out.println("Problemas na DAO ao desvincular paciente");
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                ConnectionFactory.closeConnection(this.conn, stmt);
+            } catch (Exception e) {
+                System.out.println("Problemas na DAO ao fechar conexao com o banco");
+                e.printStackTrace();
+            }
+        }
+
+        return true;
     }
 }

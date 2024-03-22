@@ -18,7 +18,7 @@ public class Main {
             opcao = scan.nextInt();
 
             if(opcao == 1) {
-                medicoController.chamarMenu(scan);
+                medicoController.chamarMenu(scan, pacienteController);
             } else if(opcao == 2) {
                 pacienteController.chamarMenu(scan, medicoController);
             }

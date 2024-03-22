@@ -135,7 +135,7 @@ public class PacienteController {
         }
     }
 
-    private void menuListarTodos() {
+    public void menuListarTodos() {
         System.out.println("Lista de pacientes");
         System.out.println("Id, " + "nome, " + "cpf, " + "médico, " + "internado");
 
@@ -144,7 +144,7 @@ public class PacienteController {
         }
     }
 
-    private void menuBuscarPorId(Scanner scan) {
+    public void menuBuscarPorId(Scanner scan) {
         int idPaciente;
         Paciente paciente;
 
@@ -163,7 +163,7 @@ public class PacienteController {
         System.out.println(paciente.getId() + ", " + paciente.getNome() + ", " + paciente.getCpf() + ", " + paciente.getMedico().getNome() + ", " + paciente.getInternado());
     }
 
-    private boolean menuCadastrar(Scanner scan, MedicoController medicoController) {
+    public boolean menuCadastrar(Scanner scan, MedicoController medicoController) {
         Paciente novoPaciente = new Paciente();
         Medico medicoPaciente;
         String pacienteNome;
@@ -217,7 +217,7 @@ public class PacienteController {
         return returnCadastrarPaciente;
     }
 
-    private boolean menuEditar(Scanner scan, MedicoController medicoController) {
+    public boolean menuEditar(Scanner scan, MedicoController medicoController) {
         int idPacienteAlterar;
         Paciente pacienteAlterar;
         int opcaoAlterar;
@@ -311,7 +311,7 @@ public class PacienteController {
         return returnPacienteAlterar;
     }
 
-    private void menuExcluir(Scanner scan) {
+    public void menuExcluir(Scanner scan) {
         int idPacienteExcluir;
         boolean returnPacienteExcluir;
 
@@ -334,7 +334,7 @@ public class PacienteController {
         System.out.println("Paciente excluido com sucesso");
     }
 
-    private void menuExibirDados(Scanner scan) {
+    public void menuExibirDados(Scanner scan) {
         int idPaciente;
         Paciente pacienteEncontrado;
 

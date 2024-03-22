@@ -75,7 +75,7 @@ public class PacienteDAOimpl implements GenericDAO{
             stmt.setInt(1, id);
             rs = stmt.executeQuery();
 
-            while(rs.next()) {
+            if (rs.next()) {
                 paciente = new Paciente();
                 paciente.setId(rs.getInt("id"));
                 paciente.setNome(rs.getString("nome"));

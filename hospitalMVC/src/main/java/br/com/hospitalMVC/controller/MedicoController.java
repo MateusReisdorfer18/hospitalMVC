@@ -3,6 +3,7 @@ package br.com.hospitalMVC.controller;
 import br.com.hospitalMVC.DAO.GenericDAO;
 import br.com.hospitalMVC.DAO.MedicoDAOimpl;
 import br.com.hospitalMVC.model.Medico;
+import br.com.hospitalMVC.model.Paciente;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,18 @@ public class MedicoController {
             return medicos;
         } catch(Exception e) {
             System.out.println("Problemas no controller ao listar todos os medicos");
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public List<Paciente> listarPacientes(Integer id) {
+        try {
+            MedicoDAOimpl dao = new MedicoDAOimpl();
+
+            return new ArrayList<>(dao.listarPacientes(id));
+        } catch (Exception e) {
+            System.out.println("Problemas no controller ao listar pacientes");
             e.printStackTrace();
             return null;
         }
@@ -52,6 +65,21 @@ public class MedicoController {
         }
     }
 
+    public boolean vincularPaciente(Paciente paciente, Integer idMedico) {
+        try {
+            MedicoDAOimpl dao = new MedicoDAOimpl();
+
+            dao.vincularPaciente(paciente, idMedico);
+
+            return true;
+        } catch (Exception e) {
+            System.out.println("Problemas no controller ao vincular paciente");
+            e.printStackTrace();
+
+            return false;
+        }
+    }
+
     public boolean editar(Medico medico) {
         try {
             GenericDAO dao = new MedicoDAOimpl();
@@ -76,7 +104,20 @@ public class MedicoController {
         }
     }
 
-    public void chamarMenu(Scanner scan) {
+    public boolean desvincularPaciente(Paciente paciente) {
+        try {
+            MedicoDAOimpl dao = new MedicoDAOimpl();
+
+            dao.desvincularPaciente(paciente);
+
+            return true;
+        } catch (Exception e) {
+            System.out.println("Problemas no controller ao desvincular paciente");
+            e.printStackTrace();
+            return false;
+        }
+    }
+    public void chamarMenu(Scanner scan, PacienteController pacienteController) {
         int opcaoMedico;
 
         System.out.println("""
@@ -86,6 +127,9 @@ public class MedicoController {
                             [3] Cadastrar Médico \s
                             [4] Editar Médico \s
                             [5] Excluir Médico \s
+                            [6] Vincular Paciente \s
+                            [7] Desvincular Paciente \s
+                            [8] Exibir pacientes \s
                             [0] Sair
                         """);
         opcaoMedico = scan.nextInt();
@@ -123,6 +167,25 @@ public class MedicoController {
                 break;
             case 5:
                 this.menuExcluir(scan);
+
+                break;
+            case 6:
+                boolean returnVincularPaciente = this.menuVincularPaciente(scan, pacienteController);
+
+                if(!returnVincularPaciente) {
+                    System.out.println("Houve um problema ao vincular paciente");
+                    break;
+                }
+
+                System.out.println("Paciente vinculado com sucesso");
+
+                break;
+            case 7:
+                this.menuDesvincularPaciente(scan, pacienteController);
+
+                break;
+            case 8:
+                this.menuExibirPacientes(scan);
 
                 break;
             default:
@@ -299,5 +362,108 @@ public class MedicoController {
         } while(!returnMedicoExcluir);
 
         System.out.println("Médico excluído");
+    }
+
+    private boolean menuVincularPaciente(Scanner scan, PacienteController pacienteController) {
+        int idPaciente;
+        int idMedico;
+        Medico medico;
+        Paciente paciente;
+        boolean returnVincularPaciente;
+
+        do {
+            this.menuListarTodos();
+
+            System.out.println("Digite o id do médico em que deseja vincular um paciente");
+            idMedico = scan.nextInt();
+
+            medico = this.buscarPorId(idMedico);
+
+            if(medico == null)
+                System.out.printf("Médico não encontrado com o id %d, digite novamente \n", idMedico);
+        } while(medico == null);
+
+        do {
+            pacienteController.menuListarTodos();
+
+            System.out.println("Digite o id do paciente que deseja vincular ao médico");
+            idPaciente = scan.nextInt();
+
+            paciente = pacienteController.buscarPorId(idPaciente);
+
+            if(paciente == null)
+                System.out.printf("Paciente não encontrado com o id %d, digite novamente \n", idPaciente);
+        } while(paciente == null);
+
+        returnVincularPaciente = this.vincularPaciente(paciente, idMedico);
+
+        return returnVincularPaciente;
+    }
+
+    private void menuDesvincularPaciente(Scanner scan, PacienteController pacienteController) {
+        int idMedico;
+        int idPaciente;
+        Medico medico;
+        Paciente paciente;
+
+        do {
+            this.menuListarTodos();
+
+            System.out.println("Digite o id do médico que deseja desvincular um paciente");
+            idMedico = scan.nextInt();
+
+            medico = this.buscarPorId(idMedico);
+
+            if(medico == null)
+                System.out.printf("Médico não encontrado com o id %d, digite novamente \n", idMedico);
+        } while(medico == null);
+
+        do {
+            System.out.println("Id, Nome");
+            for(Paciente pacienteReturn:this.listarPacientes(idMedico)) {
+                System.out.println(pacienteReturn.getId() + ", " + pacienteReturn.getNome());
+            }
+
+            System.out.println("Digite o id do paciente que deseja remover");
+            idPaciente = scan.nextInt();
+
+            paciente = pacienteController.buscarPorId(idPaciente);
+
+            if (paciente == null)
+                System.out.printf("Paciente não encontrado com o id %d, digite novamente \n", idPaciente);
+        } while(paciente == null);
+
+        this.desvincularPaciente(paciente);
+    }
+
+    private void menuExibirPacientes(Scanner scan) {
+        int idMedico;
+        Medico medico;
+
+        do {
+            this.menuListarTodos();
+
+            System.out.println("Digite o id do médico que deseja visualizar os pacientes");
+            idMedico = scan.nextInt();
+
+            medico = this.buscarPorId(idMedico);
+
+            if(medico == null)
+                System.out.printf("Médico não encontrado com o id %d, digite novamente \n", idMedico);
+
+        } while(medico == null);
+
+        System.out.println("Id, Nome");
+        for(Paciente paciente:this.listarPacientes(idMedico)) {
+            System.out.println(paciente.getId() + ", " + paciente.getNome());
+        }
+    }
+
+    private boolean validarPaciente(Paciente paciente, Medico medico) {
+        boolean pacienteValido;
+
+        pacienteValido = medico.getPacientes().contains(paciente);
+
+        return pacienteValido;
     }
 }
