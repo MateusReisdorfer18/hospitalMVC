@@ -2,8 +2,6 @@ package br.com.hospitalMVC;
 
 import br.com.hospitalMVC.controller.MedicoController;
 import br.com.hospitalMVC.controller.PacienteController;
-import br.com.hospitalMVC.model.Medico;
-import br.com.hospitalMVC.model.Paciente;
 
 import java.util.Scanner;
 
