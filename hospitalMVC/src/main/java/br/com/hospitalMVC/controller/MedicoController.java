@@ -117,6 +117,34 @@ public class MedicoController {
             return false;
         }
     }
+
+    public boolean internarPaciente(Paciente paciente) {
+        try {
+            MedicoDAOimpl dao = new MedicoDAOimpl();
+
+            dao.internarPaciente(paciente);
+
+            return true;
+        } catch (Exception e) {
+            System.out.println("Problemas no controller ao internar paciente");
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean emitirAlta(Paciente paciente) {
+        try {
+            MedicoDAOimpl dao = new MedicoDAOimpl();
+
+            dao.emitirAlta(paciente);
+
+            return true;
+        } catch (Exception e) {
+            System.out.println("Problemas no controller ao emitir alta do paciente");
+            e.printStackTrace();
+            return false;
+        }
+    }
     public void chamarMenu(Scanner scan, PacienteController pacienteController) {
         int opcaoMedico;
 
@@ -130,6 +158,8 @@ public class MedicoController {
                             [6] Vincular Paciente \s
                             [7] Desvincular Paciente \s
                             [8] Exibir pacientes \s
+                            [9] Internar paciente \s
+                            [10] Emitir alta do paciente \s
                             [0] Sair
                         """);
         opcaoMedico = scan.nextInt();
@@ -194,6 +224,23 @@ public class MedicoController {
             case 8:
                 this.menuExibirPacientes(scan);
 
+                break;
+            case 9:
+                boolean returnInternarPaciente = this.menuInternarPaciente(scan, pacienteController);
+
+                if(!returnInternarPaciente)
+                    System.out.println("Houve um problema ao internar o paciente");
+
+                System.out.println("Paciente internado");
+
+                break;
+            case 10:
+                boolean returnEmitirAlta = this.menuEmitirAlta(scan, pacienteController);
+
+                if(!returnEmitirAlta)
+                    System.out.println("Houve um problema ao emitir alta do paciente");
+
+                System.out.println("Paciente está liberado");
                 break;
             default:
                 break;
@@ -478,6 +525,72 @@ public class MedicoController {
         } while(tipoRelatorio > 3);
 
         this.relatorioPacientesVinculados(tipoRelatorio, idMedico);
+    }
+
+    private boolean menuInternarPaciente(Scanner scan, PacienteController pacienteController) {
+        int idMedico;
+        Medico medico;
+        int idPaciente;
+        Paciente paciente;
+
+        do {
+            this.menuListarTodos();
+
+            System.out.println("Digite o id do médico do paciente");
+            idMedico = scan.nextInt();
+
+            medico = this.buscarPorId(idMedico);
+
+            if(medico == null)
+                System.out.printf("Médico não encontrado com o id %d, digite novamente \n", idMedico);
+        } while(medico == null);
+
+        do {
+            this.relatorioPacientesVinculados(3, idMedico);
+
+            System.out.println("Digite o id do paciente a ser internado");
+            idPaciente = scan.nextInt();
+
+            paciente = pacienteController.buscarPorId(idPaciente);
+
+            if(paciente == null)
+                System.out.printf("Paciente não encontrado com o id %d, digite novamente \n", idPaciente);
+        } while(paciente == null);
+
+        return this.internarPaciente(paciente);
+    }
+
+    private boolean menuEmitirAlta(Scanner scan, PacienteController pacienteController) {
+        int idMedico;
+        Medico medico;
+        int idPaciente;
+        Paciente paciente;
+
+        do {
+            this.menuListarTodos();
+
+            System.out.println("Digite o id do medico do paciente");
+            idMedico = scan.nextInt();
+
+            medico = this.buscarPorId(idMedico);
+
+            if(medico == null)
+                System.out.printf("Médico não encontrado com o id %d, digite novamente \n", idMedico);
+        } while(medico == null);
+
+        do {
+            this.relatorioPacientesVinculados(2, idMedico);
+
+            System.out.println("Digite o id do paciente que ira receber alta");
+            idPaciente = scan.nextInt();
+
+            paciente = pacienteController.buscarPorId(idPaciente);
+
+            if(paciente == null)
+                System.out.printf("Paciente não encontrado com o id %d, digite novamente \n", idPaciente);
+        } while(paciente == null);
+
+        return this.emitirAlta(paciente);
     }
 
     private void relatorioPacientesVinculados(Integer tipoRelatorio, Integer idMedico) {

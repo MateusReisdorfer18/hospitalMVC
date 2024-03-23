@@ -261,4 +261,50 @@ public class MedicoDAOimpl implements GenericDAO{
 
         return true;
     }
+
+    public boolean internarPaciente(Paciente paciente) {
+        PreparedStatement stmt = null;
+        String query = "UPDATE paciente SET isInternado = true WHERE id = ?";
+
+        try {
+            stmt = this.conn.prepareStatement(query);
+            stmt.setInt(1, paciente.getId());
+            stmt.execute();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Problemas na DAO ao internar paciente");
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                ConnectionFactory.closeConnection(this.conn, stmt);
+            } catch (Exception e) {
+                System.out.println("Problemas na DAO ao fechar conexao com o banco");
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public boolean emitirAlta(Paciente paciente) {
+        PreparedStatement stmt = null;
+        String query = "UPDATE paciente SET isInternado = false WHERE id = ?";
+
+        try {
+            stmt = this.conn.prepareStatement(query);
+            stmt.setInt(1, paciente.getId());
+            stmt.execute();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Problemas na DAO ao emitir alta do paciente");
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                ConnectionFactory.closeConnection(this.conn, stmt);
+            } catch (Exception e) {
+                System.out.println("Problemas na DAO ao fechar conexao com o banco");
+                e.printStackTrace();
+            }
+        }
+    }
 }
