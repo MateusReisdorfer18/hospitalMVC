@@ -44,6 +44,9 @@ public class PacienteDAOimpl implements GenericDAO{
                 paciente.setCpf(rs.getString("cpf"));
                 paciente.setInternado(rs.getBoolean("isInternado"));
                 Medico medico = medicoController.buscarPorId(rs.getInt("medico"));
+                if(medico == null)
+                    paciente.setMedico(null);
+
                 paciente.setMedico(medico);
                 lista.add(paciente);
             }
@@ -83,6 +86,9 @@ public class PacienteDAOimpl implements GenericDAO{
                 paciente.setCpf(rs.getString("cpf"));
                 paciente.setInternado(rs.getBoolean("isInternado"));
                 Medico medico = medicoController.buscarPorId(rs.getInt("medico"));
+                if(medico == null)
+                    paciente.setMedico(null);
+
                 paciente.setMedico(medico);
             }
         } catch (SQLException e) {

@@ -181,7 +181,14 @@ public class MedicoController {
 
                 break;
             case 7:
-                this.menuDesvincularPaciente(scan, pacienteController);
+                boolean returnDesvincularPaciente = this.menuDesvincularPaciente(scan, pacienteController);
+
+                if(!returnDesvincularPaciente) {
+                    System.out.println("Houve um problema ao desvincular paciente");
+                    break;
+                }
+
+                System.out.println("Paciente desvinculado com sucesso");
 
                 break;
             case 8:
@@ -400,11 +407,12 @@ public class MedicoController {
         return returnVincularPaciente;
     }
 
-    private void menuDesvincularPaciente(Scanner scan, PacienteController pacienteController) {
+    private boolean menuDesvincularPaciente(Scanner scan, PacienteController pacienteController) {
         int idMedico;
         int idPaciente;
         Medico medico;
         Paciente paciente;
+        boolean returnDesvincularPaciente;
 
         do {
             this.menuListarTodos();
@@ -433,12 +441,15 @@ public class MedicoController {
                 System.out.printf("Paciente não encontrado com o id %d, digite novamente \n", idPaciente);
         } while(paciente == null);
 
-        this.desvincularPaciente(paciente);
+        returnDesvincularPaciente = this.desvincularPaciente(paciente);
+
+        return returnDesvincularPaciente;
     }
 
     private void menuExibirPacientes(Scanner scan) {
         int idMedico;
         Medico medico;
+        int tipoRelatorio;
 
         do {
             this.menuListarTodos();
@@ -453,17 +464,53 @@ public class MedicoController {
 
         } while(medico == null);
 
-        System.out.println("Id, Nome");
-        for(Paciente paciente:this.listarPacientes(idMedico)) {
-            System.out.println(paciente.getId() + ", " + paciente.getNome());
+        do {
+            System.out.println("""
+                    Selecione o tipo do relatorio \s
+                    [1] Todos os pacientes \s
+                    [2] Pacientes internados \s
+                    [3] Pacientes não internados
+                    """);
+            tipoRelatorio = scan.nextInt();
+
+            if(tipoRelatorio > 3 || tipoRelatorio == 0)
+                System.out.println("Opção inválida, digite novamente");
+        } while(tipoRelatorio > 3);
+
+        this.relatorioPacientesVinculados(tipoRelatorio, idMedico);
+    }
+
+    private void relatorioPacientesVinculados(Integer tipoRelatorio, Integer idMedico) {
+        List<Paciente> pacientes = new ArrayList<>();
+
+        switch (tipoRelatorio) {
+            case 1:
+                pacientes.addAll(this.listarPacientes(idMedico));
+                this.exibirRelatorioPacientes(pacientes);
+                break;
+            case 2:
+                for(Paciente paciente:this.listarPacientes(idMedico)) {
+                    if(paciente.getInternado())
+                        pacientes.add(paciente);
+                }
+                this.exibirRelatorioPacientes(pacientes);
+                break;
+            case 3:
+                for(Paciente paciente:this.listarPacientes(idMedico)) {
+                    if(!paciente.getInternado())
+                        pacientes.add(paciente);
+                }
+                this.exibirRelatorioPacientes(pacientes);
+                break;
+            default:
+                break;
         }
     }
 
-    private boolean validarPaciente(Paciente paciente, Medico medico) {
-        boolean pacienteValido;
-
-        pacienteValido = medico.getPacientes().contains(paciente);
-
-        return pacienteValido;
+    private void exibirRelatorioPacientes(List<Paciente> pacientes) {
+        System.out.println("Id, Nome");
+        for (Paciente paciente:pacientes) {
+            System.out.println(paciente.getId() + ", " + paciente.getNome());
+        }
     }
 }

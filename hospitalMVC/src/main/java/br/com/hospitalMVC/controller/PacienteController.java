@@ -140,7 +140,7 @@ public class PacienteController {
         System.out.println("Id, " + "nome, " + "cpf, " + "médico, " + "internado");
 
         for(Paciente paciente:this.listarTodos()) {
-            System.out.println(paciente.getId() + ", " + paciente.getNome() + ", " + paciente.getCpf() + ", " + paciente.getMedico().getNome() + ", " + paciente.getInternado());
+            System.out.println(paciente.getId() + ", " + paciente.getNome() + ", " + paciente.getCpf() + ", " + (paciente.getMedico() == null ? "null" : paciente.getMedico().getNome()) + ", " + paciente.getInternado());
         }
     }
 
