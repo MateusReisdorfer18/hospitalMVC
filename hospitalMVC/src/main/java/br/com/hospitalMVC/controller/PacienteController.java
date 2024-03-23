@@ -86,6 +86,7 @@ public class PacienteController {
                             [4] Editar Paciente \s
                             [5] Excluir Paciente \s
                             [6] Exibir dados do paciente \s
+                            [7] Validar acompanhante \s
                             [0] Sair
                         """);
         opcaoPaciente = scan.nextInt();
@@ -128,6 +129,16 @@ public class PacienteController {
             case 6:
                 this.menuExibirDados(scan);
 
+                break;
+            case 7:
+                boolean returnValidarAcao = this.menuValidarAcompanhante(scan);
+
+                if(!returnValidarAcao) {
+                    System.out.println("O paciente não é válido para ter um acompanhante");
+                    break;
+                }
+
+                System.out.println("O paciente esta válido para ter um acompanhante");
                 break;
             default:
                 System.out.println("Saindo...");
@@ -355,6 +366,25 @@ public class PacienteController {
         this.exibirDados(pacienteEncontrado);
     }
 
+    private boolean menuValidarAcompanhante(Scanner scan) {
+        int idPaciente;
+        Paciente paciente;
+
+        do {
+            this.menuListarTodos();
+
+            System.out.println("Digite o id do paciente que deseja validar");
+            idPaciente = scan.nextInt();
+
+            paciente = this.buscarPorId(idPaciente);
+
+            if(paciente == null)
+                System.out.printf("Paciente não encontrado com o id %d, digite novamente \n", idPaciente);
+        } while(paciente == null);
+
+        return this.validarAcompanhante(paciente);
+    }
+
     private void exibirDados(Paciente paciente) {
         System.out.printf("""
                     id: %d \s
@@ -365,10 +395,15 @@ public class PacienteController {
                     médico: %s
                 """, paciente.getId(), paciente.getIdade(), paciente.getNome(), paciente.getCpf(), this.isInternado(paciente), paciente.getMedico().getNome());
     }
+
     private String isInternado(Paciente paciente) {
         if(paciente.getInternado())
             return "True";
 
         return "False";
+    }
+
+    private boolean validarAcompanhante(Paciente paciente) {
+        return paciente.getIdade() > 60;
     }
 }

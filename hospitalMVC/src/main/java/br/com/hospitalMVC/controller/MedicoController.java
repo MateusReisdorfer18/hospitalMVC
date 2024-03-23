@@ -145,6 +145,7 @@ public class MedicoController {
             return false;
         }
     }
+
     public void chamarMenu(Scanner scan, PacienteController pacienteController) {
         int opcaoMedico;
 
